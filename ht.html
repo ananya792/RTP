@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthTracker Pro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans">
+  <nav class="bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-8">
+          <div class="flex items-center">
+            <i class="fas fa-heartbeat text-blue-600 text-2xl mr-2"></i>
+            <span class="text-gray-900 font-semibold text-lg">HealthTracker Pro</span>
+          </div>
+          <div class="hidden md:flex space-x-6">
+            <a href="#" class="text-gray-600 hover:text-blue-600">Dashboard</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600">Vitals</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600">Medications</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600">Reports</a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="text-gray-600 hover:text-blue-600">
+            <i class="fas fa-bell text-xl"></i>
+          </button>
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-user text-blue-600"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl font-bold tracking-tight mb-4">Your Health Dashboard</h1>
+        <p class="text-blue-100 text-lg">Track, monitor, and improve your health with professional insights.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 -mt-8">
+    <div class="grid md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 transform hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center space-x-3 text-green-600 mb-4">
+          <i class="fas fa-heart-pulse text-2xl"></i>
+          <h3 class="text-lg font-semibold">Heart Rate</h3>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">72 BPM</p>
+        <p class="text-green-600 text-sm mt-2">Normal range</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 transform hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center space-x-3 text-blue-600 mb-4">
+          <i class="fas fa-gauge text-2xl"></i>
+          <h3 class="text-lg font-semibold">Blood Pressure</h3>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">120/80</p>
+        <p class="text-blue-600 text-sm mt-2">Optimal</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 transform hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center space-x-3 text-purple-600 mb-4">
+          <i class="fas fa-thermometer text-2xl"></i>
+          <h3 class="text-lg font-semibold">Temperature</h3>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">98.6°F</p>
+        <p class="text-purple-600 text-sm mt-2">Normal</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 transform hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center space-x-3 text-orange-600 mb-4">
+          <i class="fas fa-lungs text-2xl"></i>
+          <h3 class="text-lg font-semibold">Oxygen Level</h3>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">98%</p>
+        <p class="text-orange-600 text-sm mt-2">Excellent</p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <div class="flex justify-between items-center">
+              <h2 class="text-xl font-bold text-gray-800">Medication Schedule</h2>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 flex items-center space-x-2">
+                <i class="fas fa-plus"></i>
+                <span>Add Medication</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="divide-y divide-gray-100">
+            <div class="p-4 hover:bg-gray-50 transition duration-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="bg-blue-100 text-blue-600 p-3 rounded-lg">
+                    <i class="fas fa-pills text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Vitamin D</h3>
+                    <div class="flex items-center text-gray-500 text-sm">
+                      <i class="far fa-clock mr-2"></i>
+                      <span>8:00 AM</span>
+                      <span class="mx-2">•</span>
+                      <span>Daily</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="text-gray-400 hover:text-blue-600">
+                  <i class="fas fa-check-circle text-2xl"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="p-4 hover:bg-gray-50 transition duration-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="bg-purple-100 text-purple-600 p-3 rounded-lg">
+                    <i class="fas fa-capsules text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Omega-3</h3>
+                    <div class="flex items-center text-gray-500 text-sm">
+                      <i class="far fa-clock mr-2"></i>
+                      <span>2:00 PM</span>
+                      <span class="mx-2">•</span>
+                      <span>Daily</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="text-gray-400 hover:text-blue-600">
+                  <i class="fas fa-check-circle text-2xl"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-xl font-bold text-gray-800">Health Trends</h2>
+            <p class="text-gray-600 mt-2">Your vital signs over the past week</p>
+          </div>
+          <div class="p-6">
+            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
+              <i class="fas fa-chart-line text-6xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+          <div class="space-y-4">
+            <button class="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg flex items-center space-x-3 transition duration-200">
+              <i class="fas fa-plus-circle text-blue-600"></i>
+              <span class="font-medium text-gray-700">Log Vital Signs</span>
+            </button>
+            <button class="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg flex items-center space-x-3 transition duration-200">
+              <i class="fas fa-notes-medical text-blue-600"></i>
+              <span class="font-medium text-gray-700">Add Health Record</span>
+            </button>
+            <button class="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg flex items-center space-x-3 transition duration-200">
+              <i class="fas fa-file-medical text-blue-600"></i>
+              <span class="font-medium text-gray-700">Generate Report</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Upcoming Appointments</h2>
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-50 rounded-lg">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-user-doctor text-blue-600"></i>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Dr. Smith</h3>
+                  <p class="text-gray-600 text-sm">General Checkup</p>
+                  <p class="text-gray-500 text-sm">March 15, 10:00 AM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t mt-12">
+    <div class="container mx-auto px-4 py-8">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h4 class="text-gray-900 font-semibold mb-4">About HealthTracker Pro</h4>
+          <p class="text-gray-600">Your personal health monitoring companion for better well-being.</p>
+        </div>
+        <div>
+          <h4 class="text-gray-900 font-semibold mb-4">Features</h4>
+          <ul class="space-y-2 text-gray-600">
+            <li><a href="#" class="hover:text-blue-600 transition">Vital Monitoring</a></li>
+            <li><a href="#" class="hover:text-blue-600 transition">Medication Tracking</a></li>
+            <li><a href="#" class="hover:text-blue-600 transition">Health Reports</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-gray-900 font-semibold mb-4">Support</h4>
+          <ul class="space-y-2 text-gray-600">
+            <li><a href="#" class="hover:text-blue-600 transition">Help Center</a></li>
+            <li><a href="#" class="hover:text-blue-600 transition">Contact Support</a></li>
+            <li><a href="#" class="hover:text-blue-600 transition">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-gray-900 font-semibold mb-4">Medical Emergency</h4>
+          <ul class="space-y-2 text-gray-600">
+            <li class="flex items-center">
+              <i class="fas fa-phone mr-2 text-blue-600"></i>
+              911 (Emergency)
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-headset mr-2 text-blue-600"></i>
+              24/7 Nurse Line
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-100 mt-8 pt-8 text-center text-gray-600">
+        <p>&copy; 2025 HealthTracker Pro. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+
+</body>
+</html>
+ 
