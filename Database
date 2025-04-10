@@ -1,0 +1,276 @@
+create database realTime;
+use realTime;
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    user_type ENUM('admin', 'staff', 'resident', 'family', 'volunteer') NOT NULL,
+    profile_picture VARCHAR(255),
+    last_login TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sessions (
+    session_id VARCHAR(255) PRIMARY KEY,
+    user_id INT NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE residents (
+    resident_id SERIAL PRIMARY KEY,
+    user_id INT UNIQUE,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    gender ENUM('male', 'female', 'other') NOT NULL,
+    room_number VARCHAR(20),
+    admission_date DATE NOT NULL,
+    emergency_contact_name VARCHAR(100),
+    emergency_contact_phone VARCHAR(20),
+    medical_conditions TEXT,
+    allergies TEXT,
+    special_requirements TEXT,
+    profile_picture VARCHAR(255),
+    status ENUM('active', 'discharged', 'deceased') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+CREATE TABLE resident_family (
+    family_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    user_id INT NOT NULL,
+    relationship VARCHAR(50) NOT NULL,
+    is_primary_contact BOOLEAN DEFAULT FALSE,
+    can_view_medical_info BOOLEAN DEFAULT FALSE,
+    can_receive_alerts BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE health_metrics (
+    metric_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    recorded_by INT NOT NULL,
+    heart_rate INT,
+    systolic_bp INT,
+    diastolic_bp INT,
+    temperature DECIMAL(4,1),
+    oxygen_level DECIMAL(4,1),
+    weight DECIMAL(5,2),
+    blood_sugar DECIMAL(5,2),
+    notes TEXT,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE,
+    FOREIGN KEY (recorded_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE medications (
+    medication_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    dosage VARCHAR(50) NOT NULL,
+    frequency VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    prescribed_by VARCHAR(100),
+    notes TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE
+);
+
+CREATE TABLE medication_schedule (
+    schedule_id SERIAL PRIMARY KEY,
+    medication_id INT NOT NULL,
+    time_of_day TIME NOT NULL,
+    days_of_week VARCHAR(20) DEFAULT '1111111', -- 7 digits representing days (1=administer, 0=skip)
+    is_completed BOOLEAN DEFAULT FALSE,
+    administered_by INT,
+    administered_at TIMESTAMP,
+    notes TEXT,
+    FOREIGN KEY (medication_id) REFERENCES medications(medication_id) ON DELETE CASCADE,
+    FOREIGN KEY (administered_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+CREATE TABLE appointments (
+    appointment_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    appointment_type ENUM('checkup', 'specialist', 'therapy', 'other') NOT NULL,
+    doctor_name VARCHAR(100),
+    location VARCHAR(100),
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status ENUM('scheduled', 'completed', 'cancelled', 'no_show') DEFAULT 'scheduled',
+    notes TEXT,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE activities (
+    activity_id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    activity_type ENUM('exercise', 'social', 'educational', 'entertainment', 'spiritual', 'other') NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    location VARCHAR(100),
+    max_participants INT,
+    status ENUM('scheduled', 'completed', 'cancelled') DEFAULT 'scheduled',
+    notes TEXT,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE activity_participants (
+    participation_id SERIAL PRIMARY KEY,
+    activity_id INT NOT NULL,
+    resident_id INT NOT NULL,
+    attended BOOLEAN DEFAULT FALSE,
+    notes TEXT,
+    FOREIGN KEY (activity_id) REFERENCES activities(activity_id) ON DELETE CASCADE,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_participation (activity_id, resident_id)
+);
+
+CREATE TABLE volunteer_shifts (
+    shift_id SERIAL PRIMARY KEY,
+    volunteer_id INT NOT NULL,
+    activity_id INT,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status ENUM('scheduled', 'completed', 'cancelled', 'no_show') DEFAULT 'scheduled',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (volunteer_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (activity_id) REFERENCES activities(activity_id) ON DELETE SET NULL
+);
+
+CREATE TABLE emergency_alerts (
+    alert_id SERIAL PRIMARY KEY,
+    resident_id INT,
+    triggered_by INT NOT NULL,
+    alert_type ENUM('medical', 'fall', 'wander', 'other') NOT NULL,
+    severity ENUM('low', 'medium', 'high', 'critical') NOT NULL,
+    description TEXT,
+    status ENUM('active', 'responded', 'resolved', 'false_alarm') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP,
+    resolved_by INT,
+    resolution_notes TEXT,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE SET NULL,
+    FOREIGN KEY (triggered_by) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (resolved_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+CREATE TABLE alert_responses (
+    response_id SERIAL PRIMARY KEY,
+    alert_id INT NOT NULL,
+    responder_id INT NOT NULL,
+    response_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actions_taken TEXT,
+    notes TEXT,
+    FOREIGN KEY (alert_id) REFERENCES emergency_alerts(alert_id) ON DELETE CASCADE,
+    FOREIGN KEY (responder_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE alert_contacts (
+    contact_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    relationship VARCHAR(50),
+    phone VARCHAR(20) NOT NULL,
+    email VARCHAR(100),
+    priority INT DEFAULT 1,
+    can_receive_alerts BOOLEAN DEFAULT TRUE,
+    notes TEXT,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE
+);
+
+CREATE TABLE messages (
+    message_id SERIAL PRIMARY KEY,
+    sender_id INT NOT NULL,
+    recipient_id INT NOT NULL,
+    subject VARCHAR(100),
+    body TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    is_urgent BOOLEAN DEFAULT FALSE,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (recipient_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE visit_requests (
+    request_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    requester_id INT NOT NULL,
+    visit_date DATE NOT NULL,
+    visit_time TIME NOT NULL,
+    purpose VARCHAR(255),
+    status ENUM('pending', 'approved', 'denied', 'completed') DEFAULT 'pending',
+    responded_by INT,
+    response_notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE,
+    FOREIGN KEY (requester_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (responded_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+CREATE TABLE family_updates (
+    update_id SERIAL PRIMARY KEY,
+    resident_id INT NOT NULL,
+    created_by INT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    is_important BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (resident_id) REFERENCES residents(resident_id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE reports (
+    report_id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    report_type ENUM('health', 'activities', 'medications', 'emergencies', 'visits', 'custom') NOT NULL,
+    parameters JSON,
+    generated_by INT NOT NULL,
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    file_path VARCHAR(255),
+    FOREIGN KEY (generated_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE system_logs (
+    log_id SERIAL PRIMARY KEY,
+    user_id INT,
+    action VARCHAR(50) NOT NULL,
+    entity_type VARCHAR(50),
+    entity_id INT,
+    details TEXT,
+    ip_address VARCHAR(45),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
